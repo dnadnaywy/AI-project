@@ -18,6 +18,7 @@ custom_trainer.train([
     'The object of the game is to checkmate the opponent\'s king;',
 ])
 
+
 exit_conditions = (":q", "quit", "exit")
 while True:
     query = input('🌻 Your turn >>: ')
