@@ -1,24 +1,27 @@
-# bot.py
-
 from chatterbot import ChatBot
+from chatterbot.trainers import ChatterBotCorpusTrainer
 from chatterbot.trainers import ListTrainer
 
-chatbot = ChatBot("Chatpot")
+chess_bot = ChatBot('ChessBot')
 
-trainer = ListTrainer(chatbot)
-trainer.train([
-    "Hi",
-    "Welcome, friend 🤗",
-])
-trainer.train([
-    "Are you a plant?",
-    "No, I'm the pot below the plant!",
+trainer = ChatterBotCorpusTrainer(chess_bot)
+trainer.train('chatterbot.corpus.english')
+
+custom_trainer = ListTrainer(chess_bot)
+
+custom_trainer.train([
+    'How does a pawn move?',
+    'A pawn moves forward one square, but captures diagonally.',
+    'What is chess?',
+    'Chess is a two-player abstract strategy board game.',
+    'What is the goal in chess?',
+    'The object of the game is to checkmate the opponent\'s king;',
 ])
 
 exit_conditions = (":q", "quit", "exit")
 while True:
-    query = input("> ")
+    query = input('🌻 Your turn >>: ')
     if query in exit_conditions:
         break
-    else:
-        print(f"🪴 {chatbot.get_response(query)}")
+    response = chess_bot.get_response(query)
+    print(f"🪴 ChessBot: {response}")
