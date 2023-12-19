@@ -1,23 +1,37 @@
+import json
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
 from chatterbot.trainers import ListTrainer
 
-chess_bot = ChatBot('ChessBot')
+data = json.loads(open('data.json', 'r').read())
+train_data = []
 
-trainer = ChatterBotCorpusTrainer(chess_bot)
-trainer.train('chatterbot.corpus.english')
+for row in data:
+    train_data.append(row['question'])
+    train_data.append(row['answer'])
+
+chess_bot = ChatBot(
+    'ChessBot',
+    logic_adapters=[
+        {
+            'import_path': 'chatterbot.logic.BestMatch',
+            'default_response': 'The question is too ambiguous and there are too many answers. Please be more specific!',
+            'maximum_similarity_threshold': 0.90
+        },
+        'chatterbot.logic.MathematicalEvaluation',
+    ],
+    preprocessors=[
+        'chatterbot.preprocessors.clean_whitespace',
+        'chatterbot.preprocessors.unescape_html',
+        'chatterbot.preprocessors.convert_to_ascii'
+    ]
+)
 
 custom_trainer = ListTrainer(chess_bot)
+custom_trainer.train(train_data)
 
-custom_trainer.train([
-    'How does a pawn move?',
-    'A pawn moves forward one square, but captures diagonally.',
-    'What is chess?',
-    'Chess is a two-player abstract strategy board game.',
-    'What is the goal in chess?',
-    'The object of the game is to checkmate the opponent\'s king;',
-])
-
+# trainer = ChatterBotCorpusTrainer(chess_bot)
+# trainer.train('chatterbot.corpus.english')
 
 exit_conditions = (":q", "quit", "exit")
 while True:
